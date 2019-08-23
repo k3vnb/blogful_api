@@ -1,6 +1,7 @@
 const { expect } = require('chai')
 const knex = require('knex')
 const app = require('../src/app')
+const { makeArticlesArray } = require('./articles.fixtures')
 
 describe.only('Articles Endpoints', function() {
     let db
@@ -17,56 +18,37 @@ describe.only('Articles Endpoints', function() {
     before('clean the table', () => db('blogful_articles').truncate())
     afterEach('cleanup', () => db('blogful_articles').truncate())
 
-    context('Given there are articles in the database', () => {
-        const testArticles = [
-            {
-                id: 1,
-                date_published: "2029-01-22T16:28:32.615Z",
-                title: 'First test post!',
-                style: 'How-to',
-                content: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Natus consequuntur deserunt commodi, nobis qui inventore corrupti iusto aliquid debitis unde non.Adipisci, pariatur.Molestiae, libero esse hic adipisci autem neque ?'
-            },
-            {
-                id: 2,
-                date_published: "2100-05-22T16:28:32.615Z",
-                title: 'Second test post!',
-                style: 'News',
-                content: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Natus consequuntur deserunt commodi, nobis qui inventore corrupti iusto aliquid debitis hello hello esse hic adipisci autem neque ?'
-            },
-            {
-                id: 3,
-                date_published: "1919-10-25T16:28:32.615Z",
-                title: 'Third test post!',
-                style: 'Listicle',
-                content: 'Lorem ipsum dolor sit amet, consectetur test test adipisci autem neque ?'
-            },
-            {
-                id: 4,
-                date_published: "1919-10-25T16:28:32.615Z",
-                title: 'Fourth test post!',
-                style: 'Story',
-                content: 'Lorem ipsum dolor sit amet, dum dum dum ....... yes hellow test ipisci autem neque ?'
-            },
-        ];
-
-        beforeEach('insert articles', () => {
-            return db
-                .into('blogful_articles')
-                .insert(testArticles)
+    
+    describe('GET /articles', () => {
+        context('Given there are articles in the database', () => {
+            const testArticles = makeArticlesArray()
+            beforeEach('insert articles', () => {
+                return db
+                    .into('blogful_articles')
+                    .insert(testArticles)
+            })
+            it('GET /articles response with 200 and all of the articles', () => {
+                return supertest(app)
+                    .get('/articles')
+                    .expect(200, testArticles)
+            })
         })
-
-        it('GET /articles response with 200 and all of the articles', () => {
-            return supertest(app)
-                .get('/articles')
-                .expect(200, testArticles)
-        })
-
-        it('GET /articles/:article_id responds with 200 and the specified article', () => {
-            const articleId = 2
-            const expectedArticle = testArticles[articleId - 1]
-            return supertest(app)
-                .get(`/articles/${articleId}`)
-                .expect(200, expectedArticle)
+    })
+    describe('GET /articles/:article_id', () => {
+        context('Given there are articles in the db', () => {
+            const testArticles = makeArticlesArray()
+            beforeEach('insert articles', () => {
+                return db  
+                    .into('blogful_articles')
+                    .insert(testArticles)
+            })
+            it('responds with 200 and the specified article', () => {
+                const articleId = 2
+                const expectedArticle = testArticles[articleId - 1]
+                return supertest(app)
+                    .get(`/articles/${articleId}`)
+                    .expect(200, expectedArticle)
+            })
         })
     })
 })
