@@ -7,7 +7,7 @@ const ArticlesService = {
             .then(rows => rows[0])
     },
     getById(knex, id){
-        return knex.select('*').from('blogful_articles').where(id, 'id').first()
+        return knex.select('*').from('blogful_articles').where('id', id).first()
     },
     deleteArticle(knex, id){
         return knex('blogful_articles').where({ id }).delete()
