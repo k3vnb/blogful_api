@@ -66,4 +66,35 @@ describe.only('Articles Endpoints', function() {
             })
         })
     })
+
+    describe.only(`POST /articles`, () => {
+        it(`creates an article, responding with 201 and the new article`, function() {
+            this.retries(3)
+            const newArticle = {
+                title: 'Test new article',
+                style: 'Listicle',
+                content: 'Test new article content...'
+            }
+            return supertest(app)
+                .post('/articles')
+                .send(newArticle)
+                .expect(201)
+                .expect(res => {
+                    const { title, style, content, date_published } = res.body
+                    expect(title).to.eql(newArticle.title)
+                    expect(style).to.eql(newArticle.style)
+                    expect(content).to.eql(newArticle.content)
+                    expect(res.body).to.have.property('id')
+                    expect(res.headers.location).to.eql(`/articles/${res.body.id}`)
+                    const expected = new Date().toLocaleString()
+                    const actual = new Date(date_published).toLocaleString()
+                    expect(actual).to.eql(expected)
+                })
+                .then(postRes => 
+                    supertest(app)
+                        .get(`/articles/${postRes.body.id}`)
+                        .expect(postRes.body)
+                )
+        })
+    })
 })
