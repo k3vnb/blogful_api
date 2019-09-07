@@ -67,7 +67,7 @@ describe('Articles Endpoints', function() {
         })
     })
 
-    describe(`POST /articles`, () => {
+    describe.only(`POST /articles`, () => {
         it(`creates an article, responding with 201 and the new article`, function() {
             this.retries(3)
             const newArticle = {
@@ -80,12 +80,12 @@ describe('Articles Endpoints', function() {
                 .send(newArticle)
                 .expect(201)
                 .expect(res => {
-                    const { title, style, content, date_published } = res.body
+                    const { title, style, content, date_published, id } = res.body
                     expect(title).to.eql(newArticle.title)
                     expect(style).to.eql(newArticle.style)
                     expect(content).to.eql(newArticle.content)
                     expect(res.body).to.have.property('id')
-                    expect(res.headers.location).to.eql(`/articles/${res.body.id}`)
+                    expect(res.headers.location).to.eql(`/articles/${id}`)
                     const expected = new Date().toLocaleString()
                     const actual = new Date(date_published).toLocaleString()
                     expect(actual).to.eql(expected)
@@ -95,6 +95,28 @@ describe('Articles Endpoints', function() {
                         .get(`/articles/${postRes.body.id}`)
                         .expect(postRes.body)
                 )
+        })
+        it(`responds with 400 and an error message when the 'title' is missing`, () => {
+            return supertest(app)
+                .post('/articles')
+                .send({
+                    style: 'Listicle',
+                    content: 'Test new article content...'
+                })
+                .expect(400, {
+                    error: { message: `Missing 'title' in request body` }
+                })
+        })
+        it(`responds with 400 and an error message the 'content' is missing`, () => {
+            return supertest(app)
+                .post('/articles')
+                .send({
+                    title: 'Test new article',
+                    style: 'Listicle'
+                })
+                .expect(400, {
+                    error: { message: `Missing 'content' in request body` }
+                })
         })
     })
 })
