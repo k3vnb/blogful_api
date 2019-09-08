@@ -41,7 +41,7 @@ describe('Articles Endpoints', function() {
             })
         })
     })
-    describe.only('GET /articles/:article_id', () => {
+    describe('GET /articles/:article_id', () => {
 
         context('Given there are articles in the db', () => {
             const testArticles = makeArticlesArray()
@@ -141,7 +141,7 @@ describe('Articles Endpoints', function() {
         })
     })
 
-    describe.only(`DELETE /articles/:article_id`, () => {
+    describe(`DELETE /articles/:article_id`, () => {
         context('Given no articles in db', () => {
           it(`responds with a 404`, () => {
             const articleId = 123456

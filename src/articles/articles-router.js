@@ -44,7 +44,7 @@ articlesRouter
             res
                 .status(201)
                 .location(`/articles/${article.id}`)
-                .json(article)
+                .json(serializeArticle(article))
         })
         .catch(next)
     })
