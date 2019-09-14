@@ -24,7 +24,7 @@ usersRouter
             })
             .catch(next)
     })
-    .post(jsonParser((req, res, next) => {
+    .post(jsonParser, (req, res, next) => {
       const { fullname, username, nickname, password } = req.body
       const newUser = { fullname, username }
 
@@ -50,7 +50,7 @@ usersRouter
             .json(serializeUser(user))
       })
       .catch(next)
-    }))
+    })
 
     usersRouter
         .route('/:user_id')

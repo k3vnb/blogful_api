@@ -22,7 +22,7 @@ const UsersService = {
             .delete()
     },
     updateUser(knex, id, newUserFields){
-        return knex('blogful_user')
+        return knex('blogful_users')
             .where({ id })
             .update(newUserFields)
     }
