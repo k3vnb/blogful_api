@@ -20,7 +20,7 @@ articlesRouter
   .get((req, res, next) => {
     ArticlesService.getAllArticles(req.app.get("db"))
       .then(articles => {
-        res.json(articles);
+        res.json(articles.map(article => serializeArticle(article)));
       })
       .catch(next);
   })

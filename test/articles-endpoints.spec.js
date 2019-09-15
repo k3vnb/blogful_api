@@ -304,7 +304,7 @@ describe('Articles Endpoints', function() {
           .send({ irrelevantField: 'foo' })
           .expect(400, {
             error: {
-              message: `Request body must contain either 'title', 'style' or 'content'`
+              message: `Request body must contain either 'title', 'style', or 'content'`
             }
           })
       })
